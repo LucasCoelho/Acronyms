@@ -30,8 +30,6 @@ struct APIClient {
         }
 
         let request = URLRequest(url: componentsUrl)
-//        request.addValue("application/json", forHTTPHeaderField: "Accept")
-//        request.addValue("application/json", forHTTPHeaderField: "content-type")
 
         let (data, _) = try await URLSession.shared.data(for: request)
 

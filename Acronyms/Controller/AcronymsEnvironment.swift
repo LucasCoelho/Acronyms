@@ -8,9 +8,4 @@
 import Foundation
 
 class AcronymsEnvironment: ObservableObject {
-    let api = APIClient()
-    
-    func getAcronyms(for initials: String) async throws -> [AcronymSearchResult] {
-        return try await api.getAcronyms(for: initials)
-    }
 }
