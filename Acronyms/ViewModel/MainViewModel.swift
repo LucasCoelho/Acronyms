@@ -17,11 +17,15 @@ class MainViewModel: ObservableObject {
 
     private let api = APIClient()
 
-    @Published var state = MainViewState.idle
+    @Published var state = MainViewState.idle {
+        didSet {
+            print(state)
+        }
+    }
     @Published var searchTerm: String = ""
     @Published var results = [FullForm]()
             
-    @MainActor func getAcronyms(for initials: String) async {
+    func getAcronyms(for initials: String) async {
         guard !initials.isEmpty else {
             results = []
             state = .idle
@@ -29,11 +33,17 @@ class MainViewModel: ObservableObject {
         }
         
         do {
-            results = try await api.getAcronyms(for: initials).first?.longForms ?? []
-            state = .loaded
+            let results = try await api.getAcronyms(for: initials).first?.longForms ?? []
+            await MainActor.run {
+                if initials == searchTerm {
+                    state = .loaded
+                    self.results = results
+                }
+            }
         } catch let error {
-            print(error.localizedDescription)
-            state = .failed(error)
+            await MainActor.run {
+                state = .failed(error)
+            }
         }
     }
 }
