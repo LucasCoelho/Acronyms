@@ -13,15 +13,12 @@ class MainViewModel: ObservableObject {
         case loading
         case failed(Error)
         case loaded
+        case noResults
     }
 
     private let api = APIClient()
 
-    @Published var state = MainViewState.idle {
-        didSet {
-            print(state)
-        }
-    }
+    @Published var state = MainViewState.idle
     @Published var searchTerm: String = ""
     @Published var results = [FullForm]()
             
@@ -36,7 +33,7 @@ class MainViewModel: ObservableObject {
             let results = try await api.getAcronyms(for: initials).first?.longForms ?? []
             await MainActor.run {
                 if initials == searchTerm {
-                    state = .loaded
+                    state = results.isEmpty ? .noResults : .loaded
                     self.results = results
                 }
             }

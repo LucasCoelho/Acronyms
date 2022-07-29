@@ -21,11 +21,9 @@ struct MainView: View {
                 case .failed(_):
                     errorView()
                 case .loaded:
-                    if !vm.results.isEmpty {
-                        resultsView()
-                    } else if !vm.searchTerm.isEmpty {
-                        noResultsView()
-                    }
+                    resultsView()
+                case .noResults:
+                    noResultsView()
                 case .idle:
                     Spacer()
                 }
